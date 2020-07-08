@@ -1,0 +1,5 @@
+authenticated.users=[{"id"\:"f35771e1-ff7e-4079-840a-17313bac70df","token"\:"baca560c-808b-4add-ba2f-52066438d494","userId"\:"lozkel","refreshToken"\:"","baseUrl"\:"https\://anypoint.mulesoft.com/"}]
+current.token=baca560c-808b-4add-ba2f-52066438d494
+current.user=lozkel
+eclipse.preferences.version=1
+expiration.time=7

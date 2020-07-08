@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs xmlns="http://www.mulesoft.org/schema/mule/types" >
+
+                <catalog name="trackable_1-request-type" format="application/json">
+        <schema format="application/json+schema" location="./trackable_1-request-data-schema.json" />
+    </catalog>
+        
+            <catalog name="trackable_1-response-type" format="application/json">
+        <schema format="application/json+schema" location="./trackable_1-response-data-schema.json" />
+    </catalog>
+        
+                    
+            <catalog name="trackable_2-response-type" format="application/json">
+        <schema format="application/json+schema" location="./trackable_2-response-data-schema.json" />
+    </catalog>
+        
+            
+    
+    <catalog name="request-streaming-mode-enum" format="application/json">
+        <schema format="application/json+schema" location="./request-streaming-mode-enum.json" />
+    </catalog>
+
+</catalogs>

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/issueQueryResponse",
+  "definitions": {
+    "issueQueryResponse": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "projectKey"
+      ],
+      "properties": {
+        "projectKey": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "issuetype": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "sfdcCaseId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "lastUpdatedDate": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "externalComments": {
+          "type": "string"
+        },
+        "externalStatus": {
+          "type": "string"
+        },
+        "externalSystemLastUpdated": {
+          "type": "string"
+        },
+        "externalOwner": {
+          "type": "string"
+        },
+        "externalPriority": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

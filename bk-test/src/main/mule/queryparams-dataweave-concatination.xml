@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fb7dd28a-4922-409b-b00e-2e40d6308cab" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="queryparams-dataweave-concatinationFlow" doc:id="ba4ddcf6-2b82-4559-8dbb-9524cc3cbcae" >
+		<http:listener doc:name="Listener" doc:id="eda30c20-027c-4e96-a346-93194b4c792b" config-ref="HTTP_Listener_config" path="/concat"/>
+		<set-variable value="" doc:name="Set Variable" doc:id="e104de84-62b6-4bab-a9a8-2a6fba3ddc2b" variableName="unique"/>
+		<ee:transform doc:name="Emp-trans" doc:id="903b59d8-bf38-4339-b4d6-eaa660da595b" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="empRecords" ><![CDATA[%dw 2.0
+var unique = (empRecords map ($.FirstName ++ "|" ++ $.LastName ++ "|"++ $.Age++"|")) distinctBy ((item,index)-> item)
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="unique" ><![CDATA[
+%dw 2.0
+output application/json
+var empRecords = [
+  {
+    "Sr.No.": 1,
+    "FirstName": "Jo",
+    "LastName": "Smith",
+    "Age": 40,
+    "Team Name": "Scrum team 1",
+    "Role": "developer"
+  },
+  {
+    "Sr.No.": 2,
+    "FirstName": "Josh",
+    "LastName": "White",
+    "Age": 45,
+    "Team Name": "architecture",
+    "Role": "SA"
+  },
+  {
+    "Sr.No.": 3,
+    "FirstName": "Josh",
+    "LastName": "White",
+    "Age": 45,
+    "Team Name": "technology",
+    "Role": "advisor"
+  },
+  {
+    "Sr.No.": 4,
+    "FirstName": "Josh",
+    "LastName": "White",
+    "Age": 35,
+    "Team Name": "development",
+    "Role": "developer"
+  },
+  {
+    "Sr.No.": 5,
+    "FirstName": "Jane",
+    "LastName": "White",
+    "Age": 30,
+    "Team Name": "architecture",
+    "Role": "SA"
+  },
+  {
+    "Sr.No.": 6,
+    "FirstName": "Jane",
+    "LastName": "White",
+    "Age": 30,
+    "Team Name": "Scrum team 1",
+    "Role": "developer"
+  },
+  {
+    "Sr.No.": 7,
+    "FirstName": "Josh",
+    "LastName": "Black",
+    "Age": 42,
+    "Team Name": "Scrum team1",
+    "Role": "developer"
+  }
+]
+
+var unique = (empRecords map ($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|")) distinctBy ((item, index) -> item)
+---
+unique map ((val, ind) -> {
+    "Sr.No.": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."Sr.No." joinBy ":",
+    "FirstName": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."FirstName"[0],
+    "LastName": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."LastName"[0],
+    "Age": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."Age"[0],
+    "Team Name": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."Team Name" joinBy ":",
+    "Role": (empRecords filter (($.FirstName ++ "|" ++ $.LastName ++ "|" ++ $.Age ++ "|") == val))."Role" joinBy ":"  
+})]]></ee:set-variable>
+				<ee:set-variable variableName="uniqu" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Emp-Log" doc:id="e06efd9c-6e7c-458b-ad03-394c33f37f57" />
+	</flow>
+</mule>

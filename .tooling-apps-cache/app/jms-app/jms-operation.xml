@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9baeeb36-cce1-4a4a-b0e9-f04bf5db5b5e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="355f35e9-8752-4dd0-a8a3-8f08ef1e5803" basePath="jms-operations" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<jms:config name="JMS_Config1" doc:name="JMS Config" doc:id="d1e3748d-886b-456b-a248-59309fde610c" >
+		<jms:active-mq-connection username="admin" password="admin" >
+			<jms:factory-configuration brokerUrl="tcp://localhost:61616" />
+		</jms:active-mq-connection>
+	</jms:config>
+	<flow name="jms-operationFlow" doc:id="c549932e-34bd-49c9-ab6d-415cc00c888c" >
+		<http:listener doc:name="Emp Add Listener" doc:id="cf3bbcb0-f7f7-496d-ac92-2cd267fd73ad" config-ref="HTTP_Listener_config1" path="add-emp"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="d9b5e992-0db7-4195-8bdd-7bf1420d276a" message="Add employee flow started : #[payload]"/>
+		<jms:publish doc:name="Publish Emp payload" doc:id="cc7620c0-f6e0-4935-b47c-ba89457e551f" config-ref="JMS_Config1" destination="Q.FSD.EMP"/>
+		<logger level="INFO" doc:name="End Log" doc:id="d37ed5a7-7dad-4888-b421-7f13730a005f" message="Emp payload published"/>
+	</flow>
+</mule>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="Emp_SAPI_HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f3b5e7b5-954b-408d-bf20-b71eee060456" basePath="emp-sapi" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="bb69f283-2885-4cc5-b153-dd67dcffd9ff" >
+		<db:oracle-connection host="localhost" user="system" password="system" instance="XE" />
+	</db:config>
+	<flow name="emp-sapiFlow" doc:id="9a2b26be-e91e-431c-9fa5-6efd7946684b" >
+		<http:listener doc:name="Add Employee Listener" doc:id="67109a1c-c4fe-42b1-a9ea-1e68dfe72515" config-ref="Emp_SAPI_HTTP_Listener_config" path="add-employee"/>
+		<logger level="INFO" doc:name="Entry Log" doc:id="a0ee5d44-f1da-4631-8ef6-9ba9fdfcb57c" message="started add employee flow : #[payload]"/>
+		<db:insert doc:name="Insert EMP" doc:id="45754671-a812-4716-9048-4ce0d410df62" config-ref="Database_Config">
+			<db:sql >insert into emp( EMP_ID,EMP_NAME, EMP_STATUS) values (:EMP_ID,:EMP_NAME, :EMP_STATUS)</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	EMP_ID :  payload.empid,
+	EMP_NAME: Payload.empname,
+	EMP_STATUS: payload.empstatus
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="6e00c83d-0905-4c90-9f74-f7e9a64700a1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"status": 200,
+"message": " Success"
+															
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

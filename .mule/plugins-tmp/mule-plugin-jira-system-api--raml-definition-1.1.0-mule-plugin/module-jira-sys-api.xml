@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="jira-sys-api"
+        prefix="jira-sys-api"
+        namespace="http://www.mulesoft.org/schema/mule/jira-sys-api"
+        doc:description="System API for working with JIRA APIs"
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           
+           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+
+    <property name="property_host" displayName="host" type="string" defaultValue="anypoint.mulesoft.com" summary="Host for consuming API"/>
+    <property name="property_port" displayName="port" type="string" defaultValue="443" summary="Port for consuming API"/>
+    <property name="property_basePath" displayName="basePath" type="string" defaultValue="/mocking/api/v1/links/91f873c2-b134-47ea-900d-b6f6f04eb823" summary="Basepath for consuming API"/>
+    <property name="property_protocol" displayName="protocol" type="string" defaultValue="HTTPS" summary="Protocol for consuming API"/>
+
+        <property name="property_proxyConfig" displayName="Proxy Config Reference" type="string" use="OPTIONAL" summary="Proxy config reference" tab="Proxy"/>
+        <property name="property_responseTimeout" displayName="Response timeout" type="string" defaultValue="10000" summary="Maximum time in milliseconds that the request element will block the execution of the flow waiting for the HTTP response."/>
+
+        <property name="property_username"
+               displayName="username"              type="string"
+                            summary="Username"                             />
+        <property name="property_password"
+               displayName="password"              type="string"
+                            summary="Password"                            password="true" />
+    
+    
+
+    <http:request-config
+name="jira-sys-api-httpreq-config" xmlns:connection="true"
+responseTimeout="#[vars.property_responseTimeout]"
+basePath="#[vars.property_basePath]">
+<http:request-connection
+host="#[vars.property_host]"
+protocol="#[vars.property_protocol]"
+port="#[vars.property_port]"
+proxyConfig="#[vars.property_proxyConfig]"
+><http:authentication>
+<http:basic-authentication
+username="#[vars.property_username]"
+password="#[vars.property_password]"
+/>
+</http:authentication>
+
+</http:request-connection>
+</http:request-config>
+
+
+
+
+    <operation name="trackable_1" displayName="trackable" >
+        <parameters>
+                            <parameter name="trackable_1-request-data" type="trackable_1-request-type" use="REQUIRED" role="PRIMARY" />
+                                        <parameter name="x-correlation-id"
+                                        type="string"
+                                        use="OPTIONAL"                    doc:description="Use the above header to optionally pass a tracking information to this API, for end-to-end traceability of the operation/transaction. 
+"/>
+                                    <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+                <http:request config-ref="jira-sys-api-httpreq-config"
+              path="/issue"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+                <mule:error-mapping sourceType="HTTP:PARSING" targetType="JIRA-SYS-API:PARSING" />
+            <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="JIRA-SYS-API:TIMEOUT" />
+            <mule:error-mapping sourceType="HTTP:SECURITY" targetType="JIRA-SYS-API:SECURITY" />
+            <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="JIRA-SYS-API:CONNECTIVITY" />
+            <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="JIRA-SYS-API:BAD_REQUEST" />
+            <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="JIRA-SYS-API:UNAUTHORIZED" />
+            <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="JIRA-SYS-API:FORBIDDEN" />
+            <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="JIRA-SYS-API:METHOD_NOT_ALLOWED" />
+            <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="JIRA-SYS-API:NOT_FOUND" />
+            <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="JIRA-SYS-API:NOT_ACCEPTABLE" />
+            <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="JIRA-SYS-API:UNSUPPORTED_MEDIA_TYPE" />
+            <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="JIRA-SYS-API:TOO_MANY_REQUESTS" />
+            <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="JIRA-SYS-API:INTERNAL_SERVER_ERROR" />
+            <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="JIRA-SYS-API:SERVICE_UNAVAILABLE" />
+            <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="JIRA-SYS-API:RETRY_EXHAUSTED" />
+                <http:body>
+            <![CDATA[#[output application/json --- vars['trackable_1-request-data']]
+]]>
+        </http:body>
+    
+            <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'x-correlation-id?': vars['x-correlation-id'] } ) filterObject $ != null ]]]>
+        </http:headers>
+            </http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+                    <output type="trackable_1-response-type" />
+        
+        <errors>
+                            <error type="PARSING"/>
+                            <error type="TIMEOUT"/>
+                            <error type="SECURITY"/>
+                            <error type="CONNECTIVITY"/>
+                            <error type="BAD_REQUEST"/>
+                            <error type="UNAUTHORIZED"/>
+                            <error type="FORBIDDEN"/>
+                            <error type="METHOD_NOT_ALLOWED"/>
+                            <error type="NOT_FOUND"/>
+                            <error type="NOT_ACCEPTABLE"/>
+                            <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                            <error type="TOO_MANY_REQUESTS"/>
+                            <error type="INTERNAL_SERVER_ERROR"/>
+                            <error type="SERVICE_UNAVAILABLE"/>
+                            <error type="RETRY_EXHAUSTED"/>
+                    </errors>
+    </operation>
+    <operation name="trackable_2" displayName="trackable" >
+        <parameters>
+                                        <parameter name="issue-id"
+                                        type="string"
+                                        use="REQUIRED"                    />
+                            <parameter name="x-correlation-id"
+                                        type="string"
+                                        use="OPTIONAL"                    doc:description="Use the above header to optionally pass a tracking information to this API, for end-to-end traceability of the operation/transaction. 
+"/>
+                                    <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+                <http:request config-ref="jira-sys-api-httpreq-config"
+              path="/issue/{issueId}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+                <mule:error-mapping sourceType="HTTP:PARSING" targetType="JIRA-SYS-API:PARSING" />
+            <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="JIRA-SYS-API:TIMEOUT" />
+            <mule:error-mapping sourceType="HTTP:SECURITY" targetType="JIRA-SYS-API:SECURITY" />
+            <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="JIRA-SYS-API:CONNECTIVITY" />
+            <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="JIRA-SYS-API:BAD_REQUEST" />
+            <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="JIRA-SYS-API:UNAUTHORIZED" />
+            <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="JIRA-SYS-API:FORBIDDEN" />
+            <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="JIRA-SYS-API:METHOD_NOT_ALLOWED" />
+            <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="JIRA-SYS-API:NOT_FOUND" />
+            <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="JIRA-SYS-API:NOT_ACCEPTABLE" />
+            <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="JIRA-SYS-API:UNSUPPORTED_MEDIA_TYPE" />
+            <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="JIRA-SYS-API:TOO_MANY_REQUESTS" />
+            <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="JIRA-SYS-API:INTERNAL_SERVER_ERROR" />
+            <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="JIRA-SYS-API:SERVICE_UNAVAILABLE" />
+            <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="JIRA-SYS-API:RETRY_EXHAUSTED" />
+        
+            <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'x-correlation-id?': vars['x-correlation-id'] } ) filterObject $ != null ]]]>
+        </http:headers>
+                <http:uri-params>
+            <![CDATA[#[ { 'issueId': vars['issue-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+        </http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+                    <output type="trackable_2-response-type" />
+        
+        <errors>
+                            <error type="PARSING"/>
+                            <error type="TIMEOUT"/>
+                            <error type="SECURITY"/>
+                            <error type="CONNECTIVITY"/>
+                            <error type="BAD_REQUEST"/>
+                            <error type="UNAUTHORIZED"/>
+                            <error type="FORBIDDEN"/>
+                            <error type="METHOD_NOT_ALLOWED"/>
+                            <error type="NOT_FOUND"/>
+                            <error type="NOT_ACCEPTABLE"/>
+                            <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                            <error type="TOO_MANY_REQUESTS"/>
+                            <error type="INTERNAL_SERVER_ERROR"/>
+                            <error type="SERVICE_UNAVAILABLE"/>
+                            <error type="RETRY_EXHAUSTED"/>
+                    </errors>
+    </operation>
+
+</module>
